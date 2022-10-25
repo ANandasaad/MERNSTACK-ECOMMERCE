@@ -26,6 +26,23 @@ exports.getAllProducts= async(req,res)=>{
     })
 }
 
+//Get Product details
+exports.getProductDetails=async(req,res,next) =>{
+    const product = await Product.findById(req.params.id);
+
+    if(!product){
+        return res.status(500).json({
+            success:false,
+            message:"Product not found"
+        })
+    }
+
+    res.status(200).json({
+        success:true,
+        product
+    })
+}
+
 // Update Product --Admin
 
 exports.updateProduct =async(req,res,next)=>
@@ -36,18 +53,38 @@ exports.updateProduct =async(req,res,next)=>
       return res.status(500).json({
         success:false,
         message:"Product not found"
-      })   
-
-      product= await Product.findByIdAndUpdate(req.params.id, req.body,{
-        new:true,
+      }) 
+    }
+    product =await Product.findByIdAndUpdate(req.params.id, res.body,{
+        new :true,
         runValidators:true,
         useFindAndModify:false
-      });
-
-      res.status(200).json({
+    });
+    res.status(200).json({
         success:true,
         product
-      })
+    }) 
     }
-}
 
+    // Delete Product
+
+    exports.deleteProduct =async(req,res,next)=>{
+        const product =await Product.findById(req.params.id);
+
+        if(!product){
+            return res.status(500).json({
+                success:false,
+                message:"Product not found"
+            })
+        }
+
+        await product.remove();
+
+        res.status(200).json({
+            success:true,
+            message:"Product Deleted Sucessfully"
+        })
+    }
+
+
+// 
